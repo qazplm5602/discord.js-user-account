@@ -17,10 +17,13 @@ module.exports = (client, { d: data }, shard) => {
     client.guilds._add(guild);
   }
 
-  if (client.application) {
-    client.application._patch(data.application);
-  } else {
-    client.application = new ClientApplication(client, data.application);
+  // 봇이 아니면 application은 없음
+  if (client.botAgent) {
+    if (client.application) {
+      client.application._patch(data.application);
+    } else {
+      client.application = new ClientApplication(client, data.application);
+    }
   }
 
   shard.checkReady();

@@ -313,7 +313,10 @@ export class REST extends AsyncEventEmitter<RestEvents> {
 				throw new Error('Expected token to be set for this request, but none was present');
 			}
 
-			headers.Authorization = `${request.authPrefix ?? this.options.authPrefix} ${this.#token}`;
+			let authPrefix = request.authPrefix ?? this.options.authPrefix;
+			if (authPrefix.length > 0) authPrefix += ' ';
+
+			headers.Authorization = `${authPrefix}${this.#token}`;
 		}
 
 		// If a reason was set, set its appropriate header

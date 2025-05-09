@@ -78,6 +78,10 @@ class Client extends BaseClient {
       ];
     }
 
+    // Rest option 변경
+    // 유저는 prefix 가 없음
+    if (!options.bot && !options?.rest?.authPrefix) this.rest.options.authPrefix = '';
+
     this._validateOptions();
 
     /**
