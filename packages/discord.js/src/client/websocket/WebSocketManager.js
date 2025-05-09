@@ -78,7 +78,6 @@ class WebSocketManager extends EventEmitter {
      * @type {Collection<number, WebSocketShard>}
      */
     this.shards = new Collection();
-
     /**
      * An array of queued events before this WebSocketManager became ready
      * @type {Object[]}
@@ -228,8 +227,8 @@ class WebSocketManager extends EventEmitter {
    * @private
    */
   attachEvents() {
-    this._ws.on(WSWebSocketShardEvents.Debug, ({ message, shardId }) => this.debug([message], shardId));
-    this._ws.on(WSWebSocketShardEvents.Dispatch, ({ data, shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.Debug, (message, shardId) => this.debug([message], shardId));
+    this._ws.on(WSWebSocketShardEvents.Dispatch, (data, shardId) => {
       this.client.emit(Events.Raw, data, shardId);
       this.emit(data.t, data.d, shardId);
       const shard = this.shards.get(shardId);
@@ -239,11 +238,11 @@ class WebSocketManager extends EventEmitter {
       }
     });
 
-    this._ws.on(WSWebSocketShardEvents.Ready, ({ data, shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.Ready, (data, shardId) => {
       this.shards.get(shardId).onReadyPacket(data);
     });
 
-    this._ws.on(WSWebSocketShardEvents.Closed, ({ code, shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.Closed, (code, shardId) => {
       const shard = this.shards.get(shardId);
       shard.emit(WebSocketShardEvents.Close, { code, reason: reasonIsDeprecated, wasClean: true });
       if (UNRECOVERABLE_CLOSE_CODES.includes(code)) {
@@ -267,7 +266,7 @@ class WebSocketManager extends EventEmitter {
        */
       this.client.emit(Events.ShardReconnecting, shardId);
     });
-    this._ws.on(WSWebSocketShardEvents.Hello, ({ shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.Hello, shardId => {
       const shard = this.shards.get(shardId);
       if (shard.sessionInfo) {
         shard.closeSequence = shard.sessionInfo.sequence;
@@ -277,7 +276,7 @@ class WebSocketManager extends EventEmitter {
       }
     });
 
-    this._ws.on(WSWebSocketShardEvents.Resumed, ({ shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.Resumed, shardId => {
       const shard = this.shards.get(shardId);
       shard.status = Status.Ready;
       /**
@@ -287,14 +286,14 @@ class WebSocketManager extends EventEmitter {
       shard.emit(WebSocketShardEvents.Resumed);
     });
 
-    this._ws.on(WSWebSocketShardEvents.HeartbeatComplete, ({ heartbeatAt, latency, shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.HeartbeatComplete, ({ heartbeatAt, latency }, shardId) => {
       this.debug([`Heartbeat acknowledged, latency of ${latency}ms.`], shardId);
       const shard = this.shards.get(shardId);
       shard.lastPingTimestamp = heartbeatAt;
       shard.ping = latency;
     });
 
-    this._ws.on(WSWebSocketShardEvents.Error, ({ error, shardId }) => {
+    this._ws.on(WSWebSocketShardEvents.Error, (error, shardId) => {
       /**
        * Emitted whenever a shard's WebSocket encounters a connection error.
        * @event Client#shardError
