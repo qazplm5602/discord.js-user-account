@@ -50,6 +50,7 @@ export const DefaultWebSocketManagerOptions = {
 		os: process.platform,
 	},
 	version: APIVersion,
+	isBot: true,
 	encoding: Encoding.JSON,
 	compression: null,
 	useIdentifyCompression: false,

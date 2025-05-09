@@ -155,6 +155,8 @@ class Client extends BaseClient {
       this.token = null;
     }
 
+    this.botAgent = options.bot;
+
     /**
      * User that the client is logged in as
      * @type {?ClientUser}

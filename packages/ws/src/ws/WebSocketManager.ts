@@ -119,6 +119,7 @@ export interface OptionalWebSocketManagerOptions {
 	 * Initial presence data to send to the gateway when identifying
 	 */
 	initialPresence: GatewayPresenceUpdateData | null;
+	isBot: boolean;
 	/**
 	 * Value between 50 and 250, total number of members where the gateway will stop sending offline members in the guild member list
 	 */
@@ -216,6 +217,8 @@ export interface ManagerShardEventsMap {
 export class WebSocketManager extends AsyncEventEmitter<ManagerShardEventsMap> implements AsyncDisposable {
 	#token: string | null = null;
 
+	#isBot: boolean = true;
+
 	/**
 	 * The options being used by this manager
 	 */
@@ -261,6 +264,7 @@ export class WebSocketManager extends AsyncEventEmitter<ManagerShardEventsMap> i
 		this.options = { ...DefaultWebSocketManagerOptions, ...options };
 		this.strategy = this.options.buildStrategy(this);
 		this.#token = options.token ?? null;
+		this.#isBot = options.isBot !== false;
 	}
 
 	/**
@@ -277,7 +281,10 @@ export class WebSocketManager extends AsyncEventEmitter<ManagerShardEventsMap> i
 			}
 		}
 
-		const data = (await this.options.rest.get(Routes.gatewayBot())) as RESTGetAPIGatewayBotResult;
+		const data = (await this.options.rest.get(
+			this.#isBot ? Routes.gatewayBot() : Routes.gateway(),
+		)) as RESTGetAPIGatewayBotResult;
+		console.log('fetchGatewayInformation', this.#isBot ? Routes.gatewayBot() : Routes.gateway());
 
 		// For single sharded bots session_start_limit.reset_after will be 0, use 5 seconds as a minimum expiration time
 		this.gatewayInformation = { data, expiresAt: Date.now() + (data.session_start_limit.reset_after || 5_000) };

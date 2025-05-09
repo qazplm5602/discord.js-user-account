@@ -121,6 +121,7 @@ class Options extends null {
       enforceNonce: false,
       presence: {},
       sweepers: this.DefaultSweeperSettings,
+      bot: true,
       ws: {
         large_threshold: 50,
         version: 10,

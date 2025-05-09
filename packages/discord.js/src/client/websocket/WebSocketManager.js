@@ -147,6 +147,7 @@ class WebSocketManager extends EventEmitter {
         intents: intents.bitfield,
         rest: this.client.rest,
         token: this.client.token,
+        isBot: this.client.botAgent,
         largeThreshold: ws.large_threshold,
         version: ws.version,
         shardIds: shards === 'auto' ? null : shards,

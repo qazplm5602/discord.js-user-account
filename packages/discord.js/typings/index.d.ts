@@ -1105,6 +1105,7 @@ export class Client<Ready extends boolean = boolean> extends BaseClient {
   public sweepers: Sweepers;
   public shard: ShardClientUtil | null;
   public token: If<Ready, string, string | null>;
+  public botAgent: boolean;
   public get uptime(): If<Ready, number>;
   public user: If<Ready, ClientUser>;
   public users: UserManager;
@@ -5856,6 +5857,7 @@ export interface ClientOptions {
   sweepers?: SweeperOptions;
   ws?: WebSocketOptions;
   rest?: Partial<RESTOptions>;
+  bot?: boolean;
   jsonTransformer?: (obj: unknown) => unknown;
   enforceNonce?: boolean;
 }
